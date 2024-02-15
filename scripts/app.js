@@ -9,6 +9,7 @@ let addBtn = document.getElementById('addBtn');
 let spendingsLeft = document.getElementById('spendingsLeft');
 let budgetValue = document.getElementById('budgetValue');
 let addedExpense = document.getElementById('addedExpense');
+let modal = document.getElementById('popup-modal');
 
 let remainder = 0;
 
@@ -33,7 +34,7 @@ const newExpense = (bill) => {
     div.append(h1, p);
     addedExpense.append(div);
 
-    span.addEventListener('click', () =>{
+    span.addEventListener('click', () => {
         let budget = getBudget();
         let expenses = getExpenses();
 
@@ -48,7 +49,7 @@ const newExpense = (bill) => {
     })
 }
 
-const onLoad = ()=> {
+const onLoad = () => {
     let spendings = 0;
     let budget = getBudget();
     let expenses = getExpenses();
@@ -65,13 +66,13 @@ const onLoad = ()=> {
 
 onLoad();
 
-submitBtn.addEventListener('click', ()=> {
-// console.log(budgetInput);
-    if(budgetInput.value == ''){
-        alert('Enter Your Budget!');
-    }else {
+submitBtn.addEventListener('click', () => {
+    // console.log(budgetInput);
+    if (budgetInput.value == '') {
+        modal.classList.remove('hidden');
+    } else {
         budgetValue.textContent = '';
-        
+
         localStorage.setItem("budget", JSON.stringify(budgetInput.value));
         localStorage.removeItem("expenses");
         budgetValue.textContent = budgetInput.value;
@@ -83,31 +84,34 @@ submitBtn.addEventListener('click', ()=> {
 
 });
 
-addBtn.addEventListener('click', ()=> {
+addBtn.addEventListener('click', () => {
     // my inputs and button is inside a form, which default is to refresh the page. 
     // event.preventDefault();
     let budget = getBudget();
     let spendings = 0;
-    
-    
-    if(budget){
-        let purchase = {
-            ExpenseName: name.value,
-            Amount: price.value
-        }
-        
-        saveExpenses(purchase);
-        let expenses = getExpenses();
 
-        expenses.forEach((purchase) => {
-            spendings += parseInt(purchase.Amount);
-        })
-        
-        newExpense(purchase);
-        remainder = parseInt(budget - spendings);
-        spendingsLeft.textContent = remainder;
-    }else{
-        alert('Enter a Budget First');
+    if(name.value !== '' && price.value !== ''){
+        if (budget) {
+            let purchase = {
+                ExpenseName: name.value,
+                Amount: price.value
+            }
+    
+            saveExpenses(purchase);
+            let expenses = getExpenses();
+    
+            expenses.forEach((purchase) => {
+                spendings += parseInt(purchase.Amount);
+            })
+    
+            newExpense(purchase);
+            remainder = parseInt(budget - spendings);
+            spendingsLeft.textContent = remainder;
+        } else {
+            modal.classList.remove('hidden');
+        }
     }
+
+
 });
 
